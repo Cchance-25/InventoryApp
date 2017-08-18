@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.chance.inventoryapp.EditorActivity">
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/name_details_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="6dp">
+
+        <TextView
+            style="@style/inputHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Item name"/>
+
+        <EditText
+            android:id="@+id/item_name_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/enter_item_name"
+            android:paddingStart="16dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/price_details_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <TextView
+            style="@style/inputHeading"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.69"
+            android:text="Price"/>
+
+        <EditText
+            android:id="@+id/item_price_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="6dp"
+            android:layout_weight="0.6"
+            android:hint="12"
+            android:inputType="number" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.83"
+            android:text="Quantity"
+            style="@style/inputHeading"/>
+
+        <EditText
+            android:id="@+id/item_quantity_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:hint="5"
+            android:inputType="number" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/supplier_details_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/inputHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Supplier"/>
+
+        <EditText
+            android:id="@+id/item_supplier_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter supplier name" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/shipment_details_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/inputHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Shipment"/>
+
+        <EditText
+            android:id="@+id/item_shipment_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter shipment tag"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sales_details_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/inputHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sales"/>
+
+        <EditText
+            android:id="@+id/item_sales_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter sales tag" />
+    </LinearLayout>
+
+
+    <Button
+        android:layout_marginTop="16dp"
+        android:id="@+id/btn_add_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="add image"/>
+
+
+</LinearLayout>

@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.chance.inventoryapp.ShowMainActivity">
+
+
+
+    <item
+        android:id="@+id/save_item"
+        android:title="Save item"
+        app:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_save"/>
+
+    <item
+        android:id="@+id/delete_item"
+        android:title="delete item"
+        android:icon="@android:drawable/ic_menu_delete"
+        app:showAsAction="always" />
+</menu>
