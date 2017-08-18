@@ -5,8 +5,10 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.chance.inventoryapp.Data.InventoryContract.InventoryEntry;
 
@@ -27,7 +29,7 @@ public class ItemsCursorAdapter extends CursorAdapter {
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public void bindView(View view, final Context context, Cursor cursor) {
 
         TextView nameTextView = (TextView) view.findViewById(R.id.product_name_text_view);
         TextView priceTextView = (TextView) view.findViewById(R.id.product_price_value_text_view);
@@ -37,14 +39,23 @@ public class ItemsCursorAdapter extends CursorAdapter {
         int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_PRICE);
         int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_QUANTITY);
 
+        Button btn = (Button) view.findViewById(R.id.sell_button);
+
+
         String itemName = cursor.getString(nameColumnIndex);
         double itemPrice = cursor.getDouble(priceColumnIndex);
         int itemQuantity = cursor.getInt(quantityColumnIndex);
 
-
         nameTextView.setText(itemName);
         priceTextView.setText(String.valueOf(itemPrice)+"$");
         quantityTextView.setText(String.valueOf(itemQuantity));
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "Sold", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 

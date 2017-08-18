@@ -19,21 +19,12 @@ import com.example.chance.inventoryapp.Data.InventoryContract.InventoryEntry;
 
 public class InventoryProvider extends ContentProvider {
 
-    /**
-     * Tag for the log messages
-     */
+
     public static final String LOG_TAG = InventoryProvider.class.getSimpleName();
 
-    /**
-     * URI matcher code for the content URI for the inventory table
-     */
     private static final int INVENTORY_ITEMS = 100;
 
-    /**
-     * URI matcher code for the content URI for a single item in the inventory table
-     */
     private static final int INVENTORY_ITEM_ID = 101;
-
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -74,9 +65,6 @@ public class InventoryProvider extends ContentProvider {
             case INVENTORY_ITEM_ID:
                 selection = InventoryEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-
-                // This will perform a query on the pets table where the _id equals 3 to return a
-                // Cursor containing that row of the table.
                 cursor = db.query(InventoryEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
@@ -125,41 +113,21 @@ public class InventoryProvider extends ContentProvider {
             throw new IllegalArgumentException("Not a valid quantity");
         }
 
-        String shipment = values.getAsString(InventoryEntry.COLUMN_ITEM_SHIPMENT);
-        if (shipment == null) {
-            throw new IllegalArgumentException("Shipment empty");
-        }
         String supplier = values.getAsString(InventoryEntry.COLUMN_ITEM_SUPPLIER);
         if (supplier == null) {
             throw new IllegalArgumentException("Supplier empty");
         }
 
-        String sales = values.getAsString(InventoryEntry.COLUMN_ITEM_SALES);
-        if (sales == null) {
-            throw new IllegalArgumentException("Shipment empty");
-        }
-
-        String imageId = values.getAsString(InventoryEntry.COLUMN_IMAGE_ID);
-
-//        if (imageId == null) {
-//            throw new IllegalArgumentException("wrong image empty");
-//        }
-
-        // Get writeable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
-        // Insert the new pet with the given values
         long id = database.insert(InventoryEntry.TABLE_NAME, null, values);
-        // If the ID is -1, then the insertion failed. Log an error and return null.
         if (id == -1) {
             Log.e(LOG_TAG, "Failed to insert row for " + uri);
             return null;
         }
 
-        // Notify all listeners that the data has changed for the pet content URI
         getContext().getContentResolver().notifyChange(uri, null);
 
-        // Return the new URI with the ID (of the newly inserted row) appended at the end
         return ContentUris.withAppendedId(uri, id);
     }
 
@@ -175,7 +143,6 @@ public class InventoryProvider extends ContentProvider {
                 rowsDeleted = database.delete(InventoryEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case INVENTORY_ITEM_ID:
-                // Delete a single row given by the ID in the URI
                 selection = InventoryEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 rowsDeleted = database.delete(InventoryEntry.TABLE_NAME, selection, selectionArgs);
@@ -227,24 +194,14 @@ public class InventoryProvider extends ContentProvider {
             }
         }
 
-        if (values.containsKey(InventoryEntry.COLUMN_ITEM_SHIPMENT)) {
-            String shipment = values.getAsString(InventoryEntry.COLUMN_ITEM_SHIPMENT);
-            if (shipment == null) {
-                throw new IllegalArgumentException("Shipment empty");
-            }
-        }
+
         if (values.containsKey(InventoryEntry.COLUMN_ITEM_SUPPLIER)) {
             String supplier = values.getAsString(InventoryEntry.COLUMN_ITEM_SUPPLIER);
             if (supplier == null) {
                 throw new IllegalArgumentException("Supplier empty");
             }
         }
-        if (values.containsKey(InventoryEntry.COLUMN_ITEM_SALES)) {
-            String sales = values.getAsString(InventoryEntry.COLUMN_ITEM_SALES);
-            if (sales == null) {
-                throw new IllegalArgumentException("Shipment empty");
-            }
-        }
+
 
         if (values.size() == 0) {
             return 0;

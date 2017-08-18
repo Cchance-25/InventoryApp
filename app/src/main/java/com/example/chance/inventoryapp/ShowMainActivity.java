@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.chance.inventoryapp.Data.InventoryContract;
@@ -24,7 +23,6 @@ public class ShowMainActivity extends AppCompatActivity implements LoaderManager
 
     private static final int INVENTORY_LOADER = 0;
     private ItemsCursorAdapter mCursorAdapter;
-    private Button sell;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +40,6 @@ public class ShowMainActivity extends AppCompatActivity implements LoaderManager
             }
         });
 
-        sell = (Button) findViewById(R.id.sell_button);
-
-
-
         ListView ItemListView = (ListView) findViewById(R.id.list_view);
 
         View emptyView = findViewById(R.id.empty_view);
@@ -57,7 +51,7 @@ public class ShowMainActivity extends AppCompatActivity implements LoaderManager
         ItemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(ShowMainActivity.this, EditorActivity.class);
+                Intent i = new Intent(ShowMainActivity.this, DetailsActivity.class);
                 Uri currentItemUri = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, id);
                 i.setData(currentItemUri);
                 startActivity(i);

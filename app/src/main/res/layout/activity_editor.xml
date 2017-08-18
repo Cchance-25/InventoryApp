@@ -15,8 +15,8 @@
         android:id="@+id/name_details_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="6dp">
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal">
 
         <TextView
             style="@style/inputHeading"
@@ -58,11 +58,11 @@
             android:inputType="number" />
 
         <TextView
+            style="@style/inputHeading"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.83"
-            android:text="Quantity"
-            style="@style/inputHeading"/>
+            android:text="Quantity" />
 
         <EditText
             android:id="@+id/item_quantity_edit_text"
@@ -93,52 +93,15 @@
             android:hint="Enter supplier name" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/shipment_details_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="horizontal">
 
-        <TextView
-            style="@style/inputHeading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Shipment"/>
 
-        <EditText
-            android:id="@+id/item_shipment_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter shipment tag"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/sales_details_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="horizontal">
-
-        <TextView
-            style="@style/inputHeading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sales"/>
-
-        <EditText
-            android:id="@+id/item_sales_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter sales tag" />
-    </LinearLayout>
 
 
     <Button
-        android:layout_marginTop="16dp"
         android:id="@+id/btn_add_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="add image"/>
 
 

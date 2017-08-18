@@ -24,26 +24,19 @@ public class InventoryContract {
         // No one to make an object of this class
     }
 
-    // Make a class for each table
     public static final class InventoryEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, INVENTORY_PATH);
 
-
         public static final String CONTENT_LIST_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + INVENTORY_PATH;
-
 
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + INVENTORY_PATH;
 
-        // Table name
         public static final String TABLE_NAME = "inventory_items";
-        // Id column
         public static final String _ID = BaseColumns._ID;
-        // Image source id column
         public static final String COLUMN_IMAGE_ID = "image_id";
-        // Name column
         public static final String COLUMN_ITEM_NAME = "item_name";
         public static final String COLUMN_ITEM_PRICE = "item_price";
         public static final String COLUMN_ITEM_QUANTITY = "item_quantity";

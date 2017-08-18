@@ -3,7 +3,6 @@ package com.example.chance.inventoryapp;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -24,7 +23,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     private static final String LOG_TAG = EditorActivity.class.getSimpleName();
     private static final int EXISTING_INVENTORY_LOADER = 0;
     private EditText mItemName, mItemPrice, mItemQuantity,
-            mItemSupplier, mItemShipment, mSales;
+            mItemSupplier;
     private ImageView mItemImage;
     private Uri mCurrentItemUri;
     private String mImagePath;
@@ -45,7 +44,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             saveItem();
             return true;
             case R.id.delete_item:
-                deleteItem();
                 return true;
         }
 
@@ -58,35 +56,27 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
-
+        setTitle("Add item");
         mItemName = (EditText) findViewById(R.id.item_name_edit_text);
         mItemPrice = (EditText) findViewById(R.id.item_price_edit_text);
         mItemQuantity = (EditText) findViewById(R.id.item_quantity_edit_text);
         mItemSupplier = (EditText) findViewById(R.id.item_supplier_edit_text);
-        mItemShipment = (EditText) findViewById(R.id.item_shipment_edit_text);
-        mSales = (EditText) findViewById(R.id.item_sales_edit_text);
 
 
-        Intent intent = getIntent();
-        mCurrentItemUri = intent.getData();
+    }
 
-
-
-        if (mCurrentItemUri == null) {
-            setTitle("Add item");
-        } else {
-            setTitle("Edit item");
-            getLoaderManager().initLoader(EXISTING_INVENTORY_LOADER, null, this);
-
-        }
-
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem menuItem = menu.findItem(R.id.delete_item);
+        menuItem.setVisible(false);
+        return true;
     }
 
     private void saveItem() {
 
         if (mCurrentItemUri == null
-                && TextUtils.isEmpty(mItemName.getText()) || TextUtils.isEmpty(mItemShipment.getText())
-                || TextUtils.isEmpty(mSales.getText()) || TextUtils.isEmpty(mItemSupplier.getText())) {
+                && TextUtils.isEmpty(mItemName.getText()) || TextUtils.isEmpty(mItemSupplier.getText())) {
             Toast.makeText(this, "One or more fields are empty.", Toast.LENGTH_SHORT).show();
             Log.e(LOG_TAG, "Error validating input.");
             return;
@@ -97,8 +87,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         int itemQuantity = Integer.parseInt(mItemQuantity.getText().toString().trim());
         String imageResourceId = mImagePath;
         String supplier = mItemSupplier.getText().toString().trim();
-        String sales = mSales.getText().toString().trim();
-        String shipment = mItemShipment.getText().toString().trim();
         if (TextUtils.isEmpty(String.valueOf(itemPrice)))
             itemPrice = 0.0f;
         if (TextUtils.isEmpty(String.valueOf(itemQuantity)))
@@ -109,8 +97,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         cv.put(InventoryEntry.COLUMN_ITEM_NAME, itemName);
         cv.put(InventoryEntry.COLUMN_ITEM_PRICE, itemPrice);
         cv.put(InventoryEntry.COLUMN_ITEM_QUANTITY, itemQuantity);
-        cv.put(InventoryEntry.COLUMN_ITEM_SHIPMENT, shipment);
-        cv.put(InventoryEntry.COLUMN_ITEM_SALES, sales);
         cv.put(InventoryEntry.COLUMN_ITEM_SUPPLIER, supplier);
 
 
@@ -159,8 +145,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        // Since the editor shows all pet attributes, define a projection that contains
-        // all columns from the pet table
         String[] projection = {
                 InventoryEntry._ID,
                 InventoryEntry.COLUMN_IMAGE_ID,
@@ -193,17 +177,13 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             int imageColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_IMAGE_ID);
             int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_PRICE);
             int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_QUANTITY);
-            int shipmentColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_SHIPMENT);
             int supplierColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_SUPPLIER);
-            int salesColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_SALES);
 
             String image = cursor.getColumnName(imageColumnIndex);
             String name = cursor.getString(nameColumnIndex);
             double price = cursor.getDouble(priceColumnIndex);
             int quantity = cursor.getInt(quantityColumnIndex);
-            String shipment = cursor.getString(shipmentColumnIndex);
             String supplier = cursor.getString(supplierColumnIndex);
-            String sales = cursor.getString(salesColumnIndex);
 
             ImageView img = (ImageView) findViewById(R.id.image_view);
 
@@ -213,8 +193,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             mItemPrice.setText(Double.toString(price));
             mItemQuantity.setText(Integer.toString(quantity));
             mItemSupplier.setText(supplier);
-            mSales.setText(sales);
-            mItemShipment.setText(shipment);
+
         }
 
     }
@@ -225,8 +204,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mItemPrice.setText("");
         mItemQuantity.setText("");
         mItemSupplier.setText("");
-        mSales.setText("");
-        mItemShipment.setText("");
+
     }
 
 

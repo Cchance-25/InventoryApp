@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
 import com.example.chance.inventoryapp.Data.InventoryContract.InventoryEntry;
 
 /**
@@ -41,9 +42,7 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
                 + InventoryEntry.COLUMN_ITEM_NAME + " TEXT NOT NULL, "
                 + InventoryEntry.COLUMN_ITEM_PRICE + " DOUBLE NOT NULL DEFAULT 0, "
                 + InventoryEntry.COLUMN_ITEM_QUANTITY + " INTEGER NOT NULL DEFAULT 0, "
-                + InventoryEntry.COLUMN_ITEM_SALES  + " TEXT, "
-                + InventoryEntry.COLUMN_ITEM_SUPPLIER + " TEXT NOT NULL, "
-                + InventoryEntry.COLUMN_ITEM_SHIPMENT + " TEXT NOT NULL);";
+                + InventoryEntry.COLUMN_ITEM_SUPPLIER + " TEXT NOT NULL);";
 
         db.execSQL(CREATE_INVENTORY_TABLES);
 

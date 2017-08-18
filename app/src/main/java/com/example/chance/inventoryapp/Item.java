@@ -5,10 +5,14 @@ package com.example.chance.inventoryapp;
  */
 
 public class Item {
+
     private int mImageResourceId;
     private String mProductName;
     private double mPrice;
     private int mQuantity;
+
+    public Item() {
+    }
 
     public Item(int mImageResourceId, String mProductName, double mPrice, int mQuantity) {
         this.mImageResourceId = mImageResourceId;
