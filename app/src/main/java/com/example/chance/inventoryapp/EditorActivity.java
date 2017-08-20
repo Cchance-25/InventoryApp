@@ -3,31 +3,44 @@ package com.example.chance.inventoryapp;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.chance.inventoryapp.Data.InventoryContract.InventoryEntry;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    static final int REQUEST_TAKE_PHOTO = 1;
     private static final String LOG_TAG = EditorActivity.class.getSimpleName();
     private static final int EXISTING_INVENTORY_LOADER = 0;
+    private static final int REQUEST_IMAGE_CAPTURE = 60;
     private EditText mItemName, mItemPrice, mItemQuantity,
             mItemSupplier;
     private ImageView mItemImage;
     private Uri mCurrentItemUri;
-    private String mImagePath;
-
+    private String mCurrentPhotoPath;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -50,7 +63,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +73,15 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mItemPrice = (EditText) findViewById(R.id.item_price_edit_text);
         mItemQuantity = (EditText) findViewById(R.id.item_quantity_edit_text);
         mItemSupplier = (EditText) findViewById(R.id.item_supplier_edit_text);
+        mItemImage = (ImageView) findViewById(R.id.image_view);
+        Button btn = (Button) findViewById(R.id.btn_add_image);
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dispatchTakePictureIntent();
+            }
+        });
 
 
     }
@@ -85,7 +106,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         String itemName = mItemName.getText().toString().trim();
         double itemPrice = Double.parseDouble(mItemPrice.getText().toString().trim());
         int itemQuantity = Integer.parseInt(mItemQuantity.getText().toString().trim());
-        String imageResourceId = mImagePath;
         String supplier = mItemSupplier.getText().toString().trim();
         if (TextUtils.isEmpty(String.valueOf(itemPrice)))
             itemPrice = 0.0f;
@@ -93,7 +113,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             itemQuantity = 0;
 
         ContentValues cv = new ContentValues();
-        cv.put(InventoryEntry.COLUMN_IMAGE_ID, imageResourceId);
+        cv.put(InventoryEntry.COLUMN_IMAGE_ID, mCurrentPhotoPath);
         cv.put(InventoryEntry.COLUMN_ITEM_NAME, itemName);
         cv.put(InventoryEntry.COLUMN_ITEM_PRICE, itemPrice);
         cv.put(InventoryEntry.COLUMN_ITEM_QUANTITY, itemQuantity);
@@ -140,7 +160,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         }
         finish();
     }
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -206,6 +225,69 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mItemSupplier.setText("");
 
     }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+
+        try {
+            createImageFile();
+            Log.e(LOG_TAG, mCurrentPhotoPath);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error creating image file.", e);
+        }
+    }
+
+    private void dispatchTakePictureIntent1() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                Log.e(LOG_TAG, "Error creating photoFile. ", ex);
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.chance.inventoryapp",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            mItemImage.setImageBitmap(imageBitmap);
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
 
 
 }

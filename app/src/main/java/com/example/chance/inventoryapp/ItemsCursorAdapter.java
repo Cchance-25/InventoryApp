@@ -39,7 +39,7 @@ public class ItemsCursorAdapter extends CursorAdapter {
         TextView priceTextView = (TextView) view.findViewById(R.id.product_price_value_text_view);
         final TextView quantityTextView = (TextView) view.findViewById(R.id.product_quantity_value_text_view);
 
-        int nameColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_NAME);
+        final int nameColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_NAME);
         int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_PRICE);
         int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_QUANTITY);
 
@@ -53,11 +53,11 @@ public class ItemsCursorAdapter extends CursorAdapter {
         Button btn = (Button) view.findViewById(R.id.sell_button);
         Object object = cursor.getString(cursor.getColumnIndex(InventoryEntry._ID));
         btn.setTag(object);
+        final int currentId = cursor.getInt(cursor.getColumnIndex(InventoryEntry._ID));
+        final Uri currentUri = Uri.withAppendedPath(InventoryEntry.CONTENT_URI, String.valueOf(currentId)); // Current URI
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int currentId = cursor.getInt(cursor.getColumnIndex(InventoryEntry._ID));
-                Uri currentUri = Uri.withAppendedPath(InventoryEntry.CONTENT_URI, String.valueOf(currentId)); // Current URI
 
                 int rowQuan = cursor.getInt(cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_QUANTITY));
 
@@ -69,14 +69,19 @@ public class ItemsCursorAdapter extends CursorAdapter {
 
                 ContentValues cv = new ContentValues();
                 cv.put(InventoryEntry.COLUMN_ITEM_QUANTITY, rowQuan);
-
-                context.getContentResolver().update(currentUri, cv,
-                        InventoryEntry.COLUMN_ITEM_QUANTITY,
-                        null);
+                String where = "_id = " + currentId;
+                context.getContentResolver().update(currentUri, cv, where, null);
+                Log.e("NEW QUANTITY FOR  ", itemName + " is: " + rowQuan);
             }
         });
     }
 
+    class clickListener implements View.OnClickListener {
 
+        @Override
+        public void onClick(View v) {
+
+        }
+    }
 
 }

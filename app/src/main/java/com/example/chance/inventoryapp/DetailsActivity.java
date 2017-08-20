@@ -6,6 +6,8 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,10 +16,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chance.inventoryapp.Data.InventoryContract.InventoryEntry;
+
+import java.io.File;
 
 public class DetailsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -32,6 +37,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     private Uri mCurrentItemUri;
     private Cursor mCurrentCursor;
     private int mCurrentQuantity;
+    private ImageView image;
 
     public Uri getCurrentUri() {
         return mCurrentItemUri;
@@ -49,6 +55,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mItemSupplier = (TextView) findViewById(R.id.supplier_name);
         addBtn = (Button) findViewById(R.id.add_quantity);
         removeBtn = (Button) findViewById(R.id.remove_quantity);
+        image = (ImageView) findViewById(R.id.product_image);
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,17 +148,35 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_PRICE);
             int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_QUANTITY);
             int supplierColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_SUPPLIER);
+            int imageColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_IMAGE_ID);
 
             String name = cursor.getString(nameColumnIndex);
             double price = cursor.getDouble(priceColumnIndex);
             int quantity = cursor.getInt(quantityColumnIndex);
             String supplier = cursor.getString(supplierColumnIndex);
+            String img = cursor.getString(imageColumnIndex);
             mCurrentQuantity = quantity;
             mItemName.setText(name);
             mItemPrice.setText(Double.toString(price));
             mItemQuantity.setText(Integer.toString(quantity));
             mItemSupplier.setText(supplier);
+            //image.setImageURI(Uri.parse(getImage(img)));
+            // image.setImageResource(R.drawable.ic_add_black_24dp);
+            image.setImageBitmap(getImage(img));
+            //Log.e("TAG", getImage(img));
+
         }
+    }
+
+    Bitmap getImage(String path) {
+
+        // Get the dimensions of the bitmap
+        File f = new File(path);
+        Uri contentUri = Uri.fromFile(f);
+        Bitmap bitmap = BitmapFactory.decodeFile(contentUri.toString());
+
+        return bitmap;
+
     }
 
     void updateQuantity() {
@@ -184,4 +209,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mItemQuantity.setText("");
         mItemSupplier.setText("");
     }
+
+
 }
