@@ -170,7 +170,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
     Bitmap getImage(String path) {
 
-        // Get the dimensions of the bitmap
         File f = new File(path);
         Uri contentUri = Uri.fromFile(f);
         Bitmap bitmap = BitmapFactory.decodeFile(contentUri.toString());
