@@ -59,6 +59,7 @@ public class ShowMainActivity extends AppCompatActivity implements LoaderManager
         });
 
         getLoaderManager().initLoader(INVENTORY_LOADER, null, this);
+
     }
 
     @Override
