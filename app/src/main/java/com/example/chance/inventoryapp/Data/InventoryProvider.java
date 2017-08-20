@@ -118,6 +118,11 @@ public class InventoryProvider extends ContentProvider {
             throw new IllegalArgumentException("Supplier empty");
         }
 
+        String img = values.getAsString(InventoryEntry.COLUMN_ITEM_SUPPLIER);
+        if (supplier == null) {
+            throw new IllegalArgumentException("add an image please");
+        }
+
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
         long id = database.insert(InventoryEntry.TABLE_NAME, null, values);

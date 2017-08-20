@@ -3,6 +3,7 @@ package com.example.chance.inventoryapp;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -10,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -75,6 +77,22 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mCurrentItemUri = i.getData();
 
         getLoaderManager().initLoader(EXISTING_INVENTORY_LOADER, null, this);
+
+        Button order = (Button) findViewById(R.id.order);
+        order.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("*/*");
+                intent.putExtra(Intent.EXTRA_EMAIL, "inventroy@app.com");
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Order");
+                intent.putExtra(Intent.EXTRA_TEXT, mCurrentItemUri.toString());
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+
+            }
+        });
     }
 
     @Override
@@ -93,7 +111,8 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 Toast.makeText(this, "Quantity Updated. ", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.delete_item:
-                deleteItem();
+                AlertDialog diaBox = deleteDialog();
+                diaBox.show();
                 return true;
         }
 
@@ -207,6 +226,28 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mItemPrice.setText("");
         mItemQuantity.setText("");
         mItemSupplier.setText("");
+    }
+
+    private AlertDialog deleteDialog() {
+        AlertDialog deleteConfirmation = new AlertDialog.Builder(this)
+                .setTitle("Delete")
+                .setMessage("Are you sure you want to delete this item?")
+                .setIcon(android.R.drawable.ic_menu_delete)
+
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        deleteItem();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        return deleteConfirmation;
+
     }
 
 

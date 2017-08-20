@@ -42,6 +42,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     private Uri mCurrentItemUri;
     private String mCurrentPhotoPath;
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -97,7 +98,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     private void saveItem() {
 
         if (mCurrentItemUri == null
-                && TextUtils.isEmpty(mItemName.getText()) || TextUtils.isEmpty(mItemSupplier.getText())) {
+                && TextUtils.isEmpty(mItemName.getText())
+                || TextUtils.isEmpty(mItemSupplier.getText())
+                || mItemImage.getDrawable() == null) {
             Toast.makeText(this, "One or more fields are empty.", Toast.LENGTH_SHORT).show();
             Log.e(LOG_TAG, "Error validating input.");
             return;
