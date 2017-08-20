@@ -1,6 +1,5 @@
 package com.example.chance.inventoryapp;
 
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -62,22 +61,35 @@ public class ItemsCursorAdapter extends CursorAdapter {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                int rowQuan = cursor.getInt(cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_QUANTITY));
+
+                Log.e("ID", "Current ID: " + currentId + " with quaintiy: " + rowQuan);
+                Log.e("CURRENT URI ", currentUri.toString());
+                Log.e("CURRENT QUANTITY FOR  ", itemName + " is: " + rowQuan);
+
+                rowQuan--;
+
+                ContentValues cv = new ContentValues();
+                cv.put(InventoryEntry.COLUMN_ITEM_QUANTITY, rowQuan);
+                String where = "_id = " + currentId;
+                context.getContentResolver().update(currentUri, cv, where, null);
+                Log.e("NEW QUANTITY FOR  ", itemName + " is: " + rowQuan);
                 //quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_QUANTITY);
-                int quantity = cursor.getInt(quantityColumnIndex);
-                if (quantity > 0) {
-                    ContentValues cv = new ContentValues();
-                    cv.put(InventoryEntry.COLUMN_ITEM_QUANTITY, quantity - 1);
-                    String selectionArgs[] = {String.valueOf(currentId)};
-                    context.getContentResolver().update(
-                            currentUri,
-                            cv,
-                            null,
-                            null);
-                    Log.e("TAG", currentUri.toString());
-                    Log.e("TAG", "Qua" + quantity);
-                    Log.e("TAG", "ID" + ContentUris.parseId(currentUri));
-                    notifyDataSetChanged();
-                }
+//                int quantity = cursor.getInt(quantityColumnIndex);
+//                if (quantity > 0) {
+//                    ContentValues cv = new ContentValues();
+//                    cv.put(InventoryEntry.COLUMN_ITEM_QUANTITY, quantity - 1);
+//                    String selectionArgs[] = {String.valueOf(currentId)};
+//                    context.getContentResolver().update(
+//                            currentUri,
+//                            cv,
+//                            null,
+//                            null);
+//                    Log.e("TAG", currentUri.toString());
+//                    Log.e("TAG", "Qua" + quantity);
+//                    Log.e("TAG", "ID" + ContentUris.parseId(currentUri));
+//                    notifyDataSetChanged();
             }
         });
     }
