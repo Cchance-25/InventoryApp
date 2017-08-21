@@ -59,7 +59,6 @@ public class ShowMainActivity extends AppCompatActivity implements LoaderManager
         });
 
         getLoaderManager().initLoader(INVENTORY_LOADER, null, this);
-
     }
 
     @Override
@@ -92,4 +91,6 @@ public class ShowMainActivity extends AppCompatActivity implements LoaderManager
     public void onLoaderReset(Loader<Cursor> loader) {
         mCursorAdapter.swapCursor(null);
     }
+
+
 }

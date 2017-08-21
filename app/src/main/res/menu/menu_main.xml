@@ -4,16 +4,21 @@
     tools:context="com.example.chance.inventoryapp.ShowMainActivity">
 
 
+    <item
+        android:id="@+id/dummy_data"
+        android:title="Add Dummy"
+        app:showAsAction="never" />
+
 
     <item
         android:id="@+id/save_item"
+        android:icon="@android:drawable/ic_menu_save"
         android:title="Save item"
-        app:showAsAction="always"
-        android:icon="@android:drawable/ic_menu_save"/>
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/delete_item"
-        android:title="delete item"
         android:icon="@android:drawable/ic_menu_delete"
+        android:title="delete item"
         app:showAsAction="always" />
 </menu>

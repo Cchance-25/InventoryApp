@@ -148,22 +148,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         finish();
     }
 
-    private void deleteItem() {
-        if (mCurrentItemUri != null) {
-               int rowsDeleted = getContentResolver().delete(mCurrentItemUri, null, null);
-                Log.e(LOG_TAG, "Deleting: "+rowsDeleted);
-               if (rowsDeleted == 0) {
-                   Toast.makeText(this, "Error deleting item",
-                           Toast.LENGTH_SHORT).show();
-               } else {
-                   Toast.makeText(this, "Item deleted",
-                           Toast.LENGTH_SHORT).show();
-               }
-
-        }
-        finish();
-    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 

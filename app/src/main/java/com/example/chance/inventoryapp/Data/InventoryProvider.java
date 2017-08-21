@@ -27,6 +27,7 @@ public class InventoryProvider extends ContentProvider {
     private static final int INVENTORY_ITEM_ID = 101;
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    private static InventoryDbHelper mDbHelper;
 
     static {
         sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY,
@@ -37,9 +38,17 @@ public class InventoryProvider extends ContentProvider {
                 InventoryContract.INVENTORY_PATH + "/#", INVENTORY_ITEM_ID);
     }
 
+    public static boolean isExist(int id) {
+        // This method checks if a specific id exists in the table or no
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        // SELECT * FROM dbName WHERE _id = id
+        String query = "SELECT _id FROM "
+                + InventoryEntry.TABLE_NAME
+                + " WHERE _id = " + id;
+        Cursor row = db.rawQuery(query, null);
+        return row.getCount() > 0;
 
-    private InventoryDbHelper mDbHelper;
-
+    }
 
     @Override
     public boolean onCreate() {
@@ -102,7 +111,7 @@ public class InventoryProvider extends ContentProvider {
             throw new IllegalArgumentException("Item requires a name");
         }
 
-        double price = values.getAsDouble(InventoryEntry.COLUMN_ITEM_PRICE);
+        int price = values.getAsInteger(InventoryEntry.COLUMN_ITEM_PRICE);
 
         if (price < 0) {
             throw new IllegalArgumentException("Not a valid price");

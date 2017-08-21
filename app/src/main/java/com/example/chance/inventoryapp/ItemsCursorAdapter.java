@@ -1,5 +1,6 @@
 package com.example.chance.inventoryapp;
 
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chance.inventoryapp.Data.InventoryContract.InventoryEntry;
+import com.example.chance.inventoryapp.Data.InventoryProvider;
 
 /**
  * Created by chance on 8/16/17.
@@ -61,55 +63,34 @@ public class ItemsCursorAdapter extends CursorAdapter {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String[] projection = {
-                        InventoryEntry._ID,
-                        InventoryEntry.COLUMN_ITEM_QUANTITY
-                };
-
-
-                //cursor.moveToFirst();
-                if (cursor.moveToPosition((int) ContentUris.parseId(currentUri) - 1)) {
-                    Toast.makeText(context, "moved to postiion " + ContentUris.parseId(currentUri), Toast.LENGTH_SHORT).show();
-                    Log.e("TAG", cursor.getColumnName(0) + " -> " + cursor.getColumnName(1));
-                    Log.e("TAG", cursor.getInt(0) + " -> " + cursor.getInt(1));
-                    int columnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_QUANTITY);
-                    int rowQuan = cursor.getInt(columnIndex);
-                    Log.e("TAG", cursor.getInt(0) + " IS " + rowQuan);
-                    if (rowQuan > 0) {
-                        ContentValues cv = new ContentValues();
-                        cv.put(InventoryEntry.COLUMN_ITEM_QUANTITY, rowQuan - 1);
-                        String where = "WHERE _id = " + ContentUris.parseId(currentUriId);
-                        context.getContentResolver().update(currentUriId, cv, where, null);
-                        notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(context, "Can't go below 0 items", Toast.LENGTH_SHORT).show();
+                int id = (int) ContentUris.parseId(currentUriId);
+                if (InventoryProvider.isExist(id)) {
+                    cursor.moveToFirst();
+                    int row = id - 1;
+                    if (cursor.moveToPosition(row)) {
+                        int columnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_QUANTITY);
+                        int rowQuan = cursor.getInt(columnIndex);
+                        if (rowQuan > 0) {
+                            ContentValues cv = new ContentValues();
+                            cv.put(InventoryEntry.COLUMN_ITEM_QUANTITY, rowQuan - 1);
+                            String where = "WHERE _id = " + ContentUris.parseId(currentUriId);
+                            context.getContentResolver().update(currentUriId, cv, where, null);
+                            notifyDataSetChanged();
+                        } else {
+                            Toast.makeText(context, "Can't go below 0 items", Toast.LENGTH_SHORT).show();
+                        }
                     }
+                } else {
+                    Log.e("UNKOWN ERROR: ", "THIS ERROR IS WEIRD AND UNKOWN!");
                 }
-//
-//                int rowQuan = current.getInt(1);
-//                Log.e("ID", "Current ID: " + currentId + " with quaintiy: " + rowQuan);
-//                Log.e("CURRENT URI ", currentUri.toString());
-//                Log.e("CURRENT QUANTITY FOR  ", itemName + " is: " + rowQuan);
-//
-//                if (rowQuan > 0) {
-//                    rowQuan--;
-//                    ContentValues cv = new ContentValues();
-//                    cv.put(InventoryEntry.COLUMN_ITEM_QUANTITY, rowQuan);
-//                    String where = "WHERE _id = " + ContentUris.parseId(currentUriId);
-//                    context.getContentResolver().update(currentUriId, cv, where, null);
-//                    Log.e("NEW QUANTITY FOR  ", itemName + " is: " + rowQuan);
-//                } else Toast.makeText(context, "Can't go below 0 items", Toast.LENGTH_SHORT).show();
 
-//                int rowQuan = cursor.getInt(cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_QUANTITY));
-//                Log.e("ID", "Current ID: " + currentId + " with quaintiy: " + rowQuan);
-//                Log.e("CURRENT URI ", currentUri.toString());
-//                //Log.e("CURRENT QUANTITY FOR  ", itemName + " is: " + rowQuan);
-//                rowQuan--;
-//                ContentValues cv = new ContentValues();
-//                cv.put(InventoryEntry.COLUMN_ITEM_QUANTITY, rowQuan);
-//                context.getContentResolver().update(currentUriId, cv, String.valueOf(ContentUris.parseId(currentUri)), null);
-//                Log.e("NEW QUANTITY FOR  ", itemName + " is: " + rowQuan);
             }
         });
+    }
+
+    boolean check(Context context, Uri uri, String checkMethod, int n) {
+        ContentResolver cr = context.getContentResolver();
+        cr.call(uri, checkMethod, String.valueOf(n), null);
+        return cr != null;
     }
 }
