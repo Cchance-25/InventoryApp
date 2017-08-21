@@ -39,7 +39,8 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     private Uri mCurrentItemUri;
     private Cursor mCurrentCursor;
     private int mCurrentQuantity;
-    private ImageView image;
+    private ImageView mProductImageView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +54,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mItemSupplier = (TextView) findViewById(R.id.supplier_name);
         addBtn = (Button) findViewById(R.id.add_quantity);
         removeBtn = (Button) findViewById(R.id.remove_quantity);
-        image = (ImageView) findViewById(R.id.product_image);
+        mProductImageView = (ImageView) findViewById(R.id.product_image);
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,16 +170,17 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             double price = cursor.getDouble(priceColumnIndex);
             int quantity = cursor.getInt(quantityColumnIndex);
             String supplier = cursor.getString(supplierColumnIndex);
-            String img = cursor.getString(imageColumnIndex);
+            byte[] img = cursor.getBlob(imageColumnIndex);
             mCurrentQuantity = quantity;
             mItemName.setText(name);
             mItemPrice.setText(Double.toString(price));
             mItemQuantity.setText(Integer.toString(quantity));
             mItemSupplier.setText(supplier);
-            //image.setImageURI(Uri.parse(getImage(img)));
-            // image.setImageResource(R.drawable.ic_add_black_24dp);
-            image.setImageBitmap(getImage(img));
-            //Log.e("TAG", getImage(img));
+
+            Bitmap imageBitmap = ImageUtils.convertByteArrayToBitmap(img);
+            mProductImageView.setImageBitmap(imageBitmap);
+
+            //Log.e("TAG", convertByteArrayToBitmap(img));
 
 
         }
@@ -188,11 +190,13 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
         File f = new File(path);
         Uri contentUri = Uri.fromFile(f);
-        Bitmap bitmap = BitmapFactory.decodeFile(contentUri.toString());
-
+        Log.e("convertByteArrayToBitmap", contentUri.toString());
+        String file = "file:/" + path;
+        Bitmap bitmap = BitmapFactory.decodeFile(file);
+        ImageUtils.convertBitmapToByteArray(bitmap);
         return bitmap;
-
     }
+
 
     void updateQuantity() {
         ContentValues cv = new ContentValues();

@@ -41,6 +41,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     private ImageView mItemImage;
     private Uri mCurrentItemUri;
     private String mCurrentPhotoPath;
+    private byte[] mImageBytesArray;
 
 
     @Override
@@ -116,7 +117,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             itemQuantity = 0;
 
         ContentValues cv = new ContentValues();
-        cv.put(InventoryEntry.COLUMN_IMAGE_ID, mCurrentPhotoPath);
+        cv.put(InventoryEntry.COLUMN_IMAGE_ID, mImageBytesArray);
         cv.put(InventoryEntry.COLUMN_ITEM_NAME, itemName);
         cv.put(InventoryEntry.COLUMN_ITEM_PRICE, itemPrice);
         cv.put(InventoryEntry.COLUMN_ITEM_QUANTITY, itemQuantity);
@@ -255,6 +256,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
+            mImageBytesArray = ImageUtils.convertBitmapToByteArray(imageBitmap);
             mItemImage.setImageBitmap(imageBitmap);
         }
     }
@@ -272,6 +274,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
+
         return image;
     }
 

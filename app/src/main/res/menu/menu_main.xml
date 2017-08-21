@@ -3,13 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.chance.inventoryapp.ShowMainActivity">
 
-
-    <item
-        android:id="@+id/dummy_data"
-        android:title="Add Dummy"
-        app:showAsAction="never" />
-
-
     <item
         android:id="@+id/save_item"
         android:icon="@android:drawable/ic_menu_save"
