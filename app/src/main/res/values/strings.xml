@@ -13,4 +13,12 @@
     <string name="error_validating">Error validating input.</string>
     <string name="error_inserting">Error, error inserting</string>
     <string name="item_saved">item saved</string>
+    <string name="product_name">Product Name:</string>
+    <string name="quantity">Quantity:</string>
+    <string name="price">Price:</string>
+    <string name="supplier_name">Supplier Name:</string>
+    <string name="order_from_supplier">Order From Supplier</string>
+    <string name="item_name">Item name</string>
+    <string name="enter_supplier_name">Enter supplier name</string>
+    <string name="add_image">add image</string>
 </resources>

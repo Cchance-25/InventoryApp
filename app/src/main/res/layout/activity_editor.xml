@@ -22,7 +22,7 @@
             style="@style/inputHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Item name"/>
+            android:text="@string/item_name" />
 
         <EditText
             android:id="@+id/item_name_edit_text"
@@ -46,7 +46,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.69"
-            android:text="Price"/>
+            android:text="@string/price" />
 
         <EditText
             android:id="@+id/item_price_edit_text"
@@ -62,7 +62,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.83"
-            android:text="Quantity" />
+            android:text="@string/quantity" />
 
         <EditText
             android:id="@+id/item_quantity_edit_text"
@@ -84,17 +84,14 @@
             style="@style/inputHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Supplier"/>
+            android:text="@string/supplier_name" />
 
         <EditText
             android:id="@+id/item_supplier_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter supplier name" />
+            android:hint="@string/enter_supplier_name" />
     </LinearLayout>
-
-
-
 
 
     <Button
@@ -102,7 +99,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="add image"/>
+        android:text="@string/add_image" />
 
 
 </LinearLayout>

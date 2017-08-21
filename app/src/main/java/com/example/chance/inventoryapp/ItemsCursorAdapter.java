@@ -1,6 +1,5 @@
 package com.example.chance.inventoryapp;
 
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -40,22 +39,21 @@ public class ItemsCursorAdapter extends CursorAdapter {
         TextView priceTextView = (TextView) view.findViewById(R.id.product_price_value_text_view);
         TextView quantityTextView = (TextView) view.findViewById(R.id.product_quantity_value_text_view);
 
-
         int nameColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_NAME);
         int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_PRICE);
         int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_QUANTITY);
 
-
         String itemName = cursor.getString(nameColumnIndex);
-        double itemPrice = cursor.getDouble(priceColumnIndex);
+        int itemPrice = cursor.getInt(priceColumnIndex);
         int itemQuantity = cursor.getInt(quantityColumnIndex);
 
-        Button btn = (Button) view.findViewById(R.id.sell_button);
-        final int currentId = cursor.getInt(cursor.getColumnIndex(InventoryEntry._ID));
+        int currentId = cursor.getInt(cursor.getColumnIndex(InventoryEntry._ID));
         final Uri currentUriId = Uri.withAppendedPath(InventoryEntry.CONTENT_URI, String.valueOf(currentId)); // Current URI
         nameTextView.setText(itemName);
         priceTextView.setText(String.valueOf(itemPrice) + "$");
         quantityTextView.setText(String.valueOf(itemQuantity));
+
+        Button btn = (Button) view.findViewById(R.id.sell_button);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,19 +71,14 @@ public class ItemsCursorAdapter extends CursorAdapter {
                             context.getContentResolver().update(currentUriId, cv, where, null);
                             notifyDataSetChanged();
                         } else {
-                            Toast.makeText(context, "Can't go below 0 items", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, R.string.negative_values, Toast.LENGTH_SHORT).show();
                         }
                     }
                 } else {
-                    Log.e("UNKOWN ERROR: ", "THIS ERROR IS WEIRD AND UNKOWN!");
+                    Log.e(getClass().getSimpleName(), "Error fetching row from database");
                 }
             }
         });
     }
 
-    boolean check(Context context, Uri uri, String checkMethod, int n) {
-        ContentResolver cr = context.getContentResolver();
-        cr.call(uri, checkMethod, String.valueOf(n), null);
-        return cr != null;
-    }
 }
