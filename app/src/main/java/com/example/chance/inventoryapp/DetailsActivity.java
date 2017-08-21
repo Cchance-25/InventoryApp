@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -24,22 +23,23 @@ import android.widget.Toast;
 
 import com.example.chance.inventoryapp.Data.InventoryContract.InventoryEntry;
 
-import java.io.File;
-
 public class DetailsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = EditorActivity.class.getSimpleName();
     private static final int EXISTING_INVENTORY_LOADER = 0;
+
+    // Views
     private TextView mItemName;
     private TextView mItemPrice;
     private TextView mItemQuantity;
     private TextView mItemSupplier;
-    private Button addBtn;
-    private Button removeBtn;
-    private Uri mCurrentItemUri;
-    private Cursor mCurrentCursor;
-    private int mCurrentQuantity;
     private ImageView mProductImageView;
+
+    //Uris
+    private Uri mCurrentItemUri;
+
+    // primitive types
+    private int mCurrentQuantity;
 
 
     @Override
@@ -47,15 +47,13 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-
         mItemName = (TextView) findViewById(R.id.product_name);
         mItemPrice = (TextView) findViewById(R.id.price_value);
         mItemQuantity = (TextView) findViewById(R.id.quantity_value);
         mItemSupplier = (TextView) findViewById(R.id.supplier_name);
-        addBtn = (Button) findViewById(R.id.add_quantity);
-        removeBtn = (Button) findViewById(R.id.remove_quantity);
         mProductImageView = (ImageView) findViewById(R.id.product_image);
 
+        Button addBtn = (Button) findViewById(R.id.add_quantity);
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +61,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             }
         });
 
+        Button removeBtn = (Button) findViewById(R.id.remove_quantity);
         removeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,7 +86,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                 }
-
             }
         });
     }
@@ -132,7 +130,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         finish();
     }
 
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
@@ -155,69 +152,31 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (cursor == null || cursor.getCount() < 1) {
-            return;
-        }
-        mCurrentCursor = cursor;
+        if (cursor == null || cursor.getCount() < 1) return;
+
         if (cursor.moveToFirst()) {
+            // Tables columns
             int nameColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_NAME);
             int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_PRICE);
             int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_QUANTITY);
             int supplierColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_SUPPLIER);
             int imageColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_IMAGE_ID);
 
+            // Text input values
             String name = cursor.getString(nameColumnIndex);
+            String supplier = cursor.getString(supplierColumnIndex);
             double price = cursor.getDouble(priceColumnIndex);
             int quantity = cursor.getInt(quantityColumnIndex);
-            String supplier = cursor.getString(supplierColumnIndex);
-            byte[] img = cursor.getBlob(imageColumnIndex);
-            mCurrentQuantity = quantity;
+            byte[] imageBytes = cursor.getBlob(imageColumnIndex);
+
+            // Setting values to views
             mItemName.setText(name);
             mItemPrice.setText(Double.toString(price));
             mItemQuantity.setText(Integer.toString(quantity));
             mItemSupplier.setText(supplier);
 
-            Bitmap imageBitmap = ImageUtils.convertByteArrayToBitmap(img);
+            Bitmap imageBitmap = ImageUtils.convertByteArrayToBitmap(imageBytes);
             mProductImageView.setImageBitmap(imageBitmap);
-
-            //Log.e("TAG", convertByteArrayToBitmap(img));
-
-
-        }
-    }
-
-    Bitmap getImage(String path) {
-
-        File f = new File(path);
-        Uri contentUri = Uri.fromFile(f);
-        Log.e("convertByteArrayToBitmap", contentUri.toString());
-        String file = "file:/" + path;
-        Bitmap bitmap = BitmapFactory.decodeFile(file);
-        ImageUtils.convertBitmapToByteArray(bitmap);
-        return bitmap;
-    }
-
-
-    void updateQuantity() {
-        ContentValues cv = new ContentValues();
-        cv.put(InventoryEntry.COLUMN_ITEM_QUANTITY, mCurrentQuantity);
-        getContentResolver().update(mCurrentItemUri,
-                cv,
-                InventoryEntry.COLUMN_ITEM_QUANTITY,
-                null);
-    }
-
-    void addQuantity() {
-        mCurrentQuantity++;
-        mItemQuantity.setText(String.valueOf(mCurrentQuantity));
-    }
-
-    void removeQuantity() {
-        if (mCurrentQuantity > 0) {
-            mCurrentQuantity--;
-            mItemQuantity.setText(String.valueOf(mCurrentQuantity));
-        } else {
-            Toast.makeText(getApplicationContext(), "Quantity can't be negative!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -231,17 +190,17 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
     private AlertDialog deleteDialog() {
         AlertDialog deleteConfirmation = new AlertDialog.Builder(this)
-                .setTitle("Delete")
-                .setMessage("Are you sure you want to delete this item?")
+                .setTitle(R.string.delete)
+                .setMessage(R.string.delete_confirmation)
                 .setIcon(android.R.drawable.ic_menu_delete)
 
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         deleteItem();
                         dialog.dismiss();
                     }
                 })
-                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
@@ -249,6 +208,29 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 .create();
         return deleteConfirmation;
 
+    }
+
+    private void updateQuantity() {
+        ContentValues cv = new ContentValues();
+        cv.put(InventoryEntry.COLUMN_ITEM_QUANTITY, mCurrentQuantity);
+        getContentResolver().update(mCurrentItemUri,
+                cv,
+                InventoryEntry.COLUMN_ITEM_QUANTITY,
+                null);
+    }
+
+    private void addQuantity() {
+        mCurrentQuantity++;
+        mItemQuantity.setText(String.valueOf(mCurrentQuantity));
+    }
+
+    void removeQuantity() {
+        if (mCurrentQuantity > 0) {
+            mCurrentQuantity--;
+            mItemQuantity.setText(String.valueOf(mCurrentQuantity));
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.negative_values, Toast.LENGTH_SHORT).show();
+        }
     }
 
 

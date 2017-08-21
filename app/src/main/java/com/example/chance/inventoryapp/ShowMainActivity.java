@@ -71,14 +71,12 @@ public class ShowMainActivity extends AppCompatActivity implements LoaderManager
                 InventoryEntry.COLUMN_ITEM_PRICE
         };
 
-
         return new CursorLoader(this,
                 InventoryEntry.CONTENT_URI,
                 projection,
                 null,
                 null,
                 null);
-
     }
 
     @Override

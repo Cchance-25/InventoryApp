@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -32,14 +31,17 @@ import java.util.Date;
 
 public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    static final int REQUEST_TAKE_PHOTO = 1;
     private static final String LOG_TAG = EditorActivity.class.getSimpleName();
-    private static final int EXISTING_INVENTORY_LOADER = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 60;
-    private EditText mItemName, mItemPrice, mItemQuantity,
-            mItemSupplier;
+
+    // Views
+    private EditText mItemName, mItemPrice, mItemQuantity, mItemSupplier;
     private ImageView mItemImage;
+
+    //Uris
     private Uri mCurrentItemUri;
+
+    // Data
     private String mCurrentPhotoPath;
     private byte[] mImageBytesArray;
 
@@ -53,15 +55,13 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         switch (id) {
             case R.id.save_item:
-            saveItem();
-            return true;
+                saveItem();
+                return true;
             case R.id.delete_item:
                 return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -70,22 +70,20 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
-        setTitle("Add item");
+        // Binding views
         mItemName = (EditText) findViewById(R.id.item_name_edit_text);
         mItemPrice = (EditText) findViewById(R.id.item_price_edit_text);
         mItemQuantity = (EditText) findViewById(R.id.item_quantity_edit_text);
         mItemSupplier = (EditText) findViewById(R.id.item_supplier_edit_text);
         mItemImage = (ImageView) findViewById(R.id.image_view);
-        Button btn = (Button) findViewById(R.id.btn_add_image);
 
+        Button btn = (Button) findViewById(R.id.btn_add_image);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dispatchTakePictureIntent();
             }
         });
-
-
     }
 
     @Override
@@ -94,59 +92,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         MenuItem menuItem = menu.findItem(R.id.delete_item);
         menuItem.setVisible(false);
         return true;
-    }
-
-    private void saveItem() {
-
-        if (mCurrentItemUri == null
-                && TextUtils.isEmpty(mItemName.getText())
-                || TextUtils.isEmpty(mItemSupplier.getText())
-                || mItemImage.getDrawable() == null) {
-            Toast.makeText(this, "One or more fields are empty.", Toast.LENGTH_SHORT).show();
-            Log.e(LOG_TAG, "Error validating input.");
-            return;
-        }
-
-        String itemName = mItemName.getText().toString().trim();
-        double itemPrice = Double.parseDouble(mItemPrice.getText().toString().trim());
-        int itemQuantity = Integer.parseInt(mItemQuantity.getText().toString().trim());
-        String supplier = mItemSupplier.getText().toString().trim();
-        if (TextUtils.isEmpty(String.valueOf(itemPrice)))
-            itemPrice = 0.0f;
-        if (TextUtils.isEmpty(String.valueOf(itemQuantity)))
-            itemQuantity = 0;
-
-        ContentValues cv = new ContentValues();
-        cv.put(InventoryEntry.COLUMN_IMAGE_ID, mImageBytesArray);
-        cv.put(InventoryEntry.COLUMN_ITEM_NAME, itemName);
-        cv.put(InventoryEntry.COLUMN_ITEM_PRICE, itemPrice);
-        cv.put(InventoryEntry.COLUMN_ITEM_QUANTITY, itemQuantity);
-        cv.put(InventoryEntry.COLUMN_ITEM_SUPPLIER, supplier);
-
-
-        if (mCurrentItemUri == null) {
-            Uri newUri = getContentResolver().insert(InventoryEntry.CONTENT_URI, cv);
-
-            if (newUri == null) {
-                Toast.makeText(this, "Error, error inserting",
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "item saved",
-                        Toast.LENGTH_SHORT).show();
-            }
-        } else {
-
-            int rowsAffected = getContentResolver().update(mCurrentItemUri, cv, null, null);
-
-            if (rowsAffected == 0) {
-                Toast.makeText(this, "Item not saved",
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Item edited",
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
-        finish();
     }
 
     @Override
@@ -181,26 +126,19 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
         if (cursor.moveToFirst()) {
             int nameColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_NAME);
-            int imageColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_IMAGE_ID);
             int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_PRICE);
             int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_QUANTITY);
             int supplierColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_SUPPLIER);
 
-            String image = cursor.getColumnName(imageColumnIndex);
             String name = cursor.getString(nameColumnIndex);
             double price = cursor.getDouble(priceColumnIndex);
             int quantity = cursor.getInt(quantityColumnIndex);
             String supplier = cursor.getString(supplierColumnIndex);
 
-            ImageView img = (ImageView) findViewById(R.id.image_view);
-
-
-
             mItemName.setText(name);
             mItemPrice.setText(Double.toString(price));
             mItemQuantity.setText(Integer.toString(quantity));
             mItemSupplier.setText(supplier);
-
         }
 
     }
@@ -211,7 +149,16 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mItemPrice.setText("");
         mItemQuantity.setText("");
         mItemSupplier.setText("");
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            mImageBytesArray = ImageUtils.convertBitmapToByteArray(imageBitmap);
+            mItemImage.setImageBitmap(imageBitmap);
+        }
     }
 
     private void dispatchTakePictureIntent() {
@@ -224,41 +171,51 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             createImageFile();
             Log.e(LOG_TAG, mCurrentPhotoPath);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error creating image file.", e);
+            Log.e(LOG_TAG, getString(R.string.error_creating_image_file), e);
         }
     }
 
-    private void dispatchTakePictureIntent1() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-                Log.e(LOG_TAG, "Error creating photoFile. ", ex);
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.chance.inventoryapp",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }
-        }
-    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            mImageBytesArray = ImageUtils.convertBitmapToByteArray(imageBitmap);
-            mItemImage.setImageBitmap(imageBitmap);
+    private void saveItem() {
+
+        if (mCurrentItemUri == null
+                && TextUtils.isEmpty(mItemName.getText())
+                || TextUtils.isEmpty(mItemSupplier.getText())
+                || mItemImage.getDrawable() == null) {
+            Toast.makeText(this, R.string.empty_fields_message, Toast.LENGTH_SHORT).show();
+            Log.e(LOG_TAG, getString(R.string.error_validating));
+            return;
         }
+
+        String itemName = mItemName.getText().toString().trim();
+        int itemPrice = Integer.parseInt(mItemPrice.getText().toString().trim());
+        int itemQuantity = Integer.parseInt(mItemQuantity.getText().toString().trim());
+        String supplier = mItemSupplier.getText().toString().trim();
+
+        // Price can not be empty, if somehow, default value is 0
+        if (TextUtils.isEmpty(String.valueOf(itemPrice))) itemPrice = 0;
+
+        // Quantity can not be empty, if somehow, default value is 0
+        if (TextUtils.isEmpty(String.valueOf(itemQuantity))) itemQuantity = 0;
+
+        ContentValues cv = new ContentValues();
+        cv.put(InventoryEntry.COLUMN_IMAGE_ID, mImageBytesArray);
+        cv.put(InventoryEntry.COLUMN_ITEM_NAME, itemName);
+        cv.put(InventoryEntry.COLUMN_ITEM_PRICE, itemPrice);
+        cv.put(InventoryEntry.COLUMN_ITEM_QUANTITY, itemQuantity);
+        cv.put(InventoryEntry.COLUMN_ITEM_SUPPLIER, supplier);
+
+        Uri newUri = getContentResolver().insert(InventoryEntry.CONTENT_URI, cv);
+
+        if (newUri == null) {
+            Toast.makeText(this, R.string.error_inserting,
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, R.string.item_saved,
+                    Toast.LENGTH_SHORT).show();
+
+        }
+        finish();
     }
 
     private File createImageFile() throws IOException {
@@ -274,10 +231,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
-
         return image;
     }
-
 
 
 }

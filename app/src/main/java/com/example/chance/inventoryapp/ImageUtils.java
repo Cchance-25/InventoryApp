@@ -11,6 +11,10 @@ import java.io.ByteArrayOutputStream;
 
 public class ImageUtils {
 
+    private ImageUtils() {
+
+    }
+
     public static byte[] convertBitmapToByteArray(Bitmap bitmap) {
         ByteArrayOutputStream bytsStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 0, bytsStream);
