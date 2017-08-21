@@ -41,6 +41,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     private int mCurrentQuantity;
     private ImageView image;
 
+
     public Uri getCurrentUri() {
         return mCurrentItemUri;
     }
@@ -183,6 +184,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             // image.setImageResource(R.drawable.ic_add_black_24dp);
             image.setImageBitmap(getImage(img));
             //Log.e("TAG", getImage(img));
+
 
         }
     }
