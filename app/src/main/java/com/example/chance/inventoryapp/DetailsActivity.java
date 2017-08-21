@@ -41,11 +41,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     private int mCurrentQuantity;
     private ImageView image;
 
-
-    public Uri getCurrentUri() {
-        return mCurrentItemUri;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

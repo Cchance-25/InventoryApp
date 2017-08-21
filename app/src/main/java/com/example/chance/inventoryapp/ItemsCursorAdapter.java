@@ -24,9 +24,6 @@ import com.example.chance.inventoryapp.Data.InventoryProvider;
 
 public class ItemsCursorAdapter extends CursorAdapter {
 
-
-    // chmod 777 /data /data/data /data/data/com.application.package /data/data/com.application.package/*su
-
     public ItemsCursorAdapter(Context context, Cursor c) {
         super(context, c, false);
     }
@@ -49,14 +46,13 @@ public class ItemsCursorAdapter extends CursorAdapter {
         int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_QUANTITY);
 
 
-        final String itemName = cursor.getString(nameColumnIndex);
+        String itemName = cursor.getString(nameColumnIndex);
         double itemPrice = cursor.getDouble(priceColumnIndex);
         int itemQuantity = cursor.getInt(quantityColumnIndex);
 
         Button btn = (Button) view.findViewById(R.id.sell_button);
         final int currentId = cursor.getInt(cursor.getColumnIndex(InventoryEntry._ID));
         final Uri currentUriId = Uri.withAppendedPath(InventoryEntry.CONTENT_URI, String.valueOf(currentId)); // Current URI
-        final Uri currentUri = Uri.withAppendedPath(InventoryEntry.CONTENT_URI, String.valueOf(currentId)); // Current URI
         nameTextView.setText(itemName);
         priceTextView.setText(String.valueOf(itemPrice) + "$");
         quantityTextView.setText(String.valueOf(itemQuantity));
@@ -83,7 +79,6 @@ public class ItemsCursorAdapter extends CursorAdapter {
                 } else {
                     Log.e("UNKOWN ERROR: ", "THIS ERROR IS WEIRD AND UNKOWN!");
                 }
-
             }
         });
     }
