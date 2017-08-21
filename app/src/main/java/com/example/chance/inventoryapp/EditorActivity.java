@@ -181,6 +181,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         if (mCurrentItemUri == null
                 && TextUtils.isEmpty(mItemName.getText())
                 || TextUtils.isEmpty(mItemSupplier.getText())
+                || TextUtils.isEmpty(String.valueOf(mItemPrice.getText().toString()))
+                || TextUtils.isEmpty(String.valueOf(mItemQuantity.getText().toString()))
                 || mItemImage.getDrawable() == null) {
             Toast.makeText(this, R.string.empty_fields_message, Toast.LENGTH_SHORT).show();
             Log.e(LOG_TAG, getString(R.string.error_validating));

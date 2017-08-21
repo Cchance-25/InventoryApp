@@ -49,9 +49,9 @@ public class ItemsCursorAdapter extends CursorAdapter {
 
         int currentId = cursor.getInt(cursor.getColumnIndex(InventoryEntry._ID));
         final Uri currentUriId = Uri.withAppendedPath(InventoryEntry.CONTENT_URI, String.valueOf(currentId)); // Current URI
-        nameTextView.setText(itemName);
-        priceTextView.setText(String.valueOf(itemPrice) + "$");
-        quantityTextView.setText(String.valueOf(itemQuantity));
+        nameTextView.setText(context.getResources().getText(R.string.product_name) + " " + itemName);
+        priceTextView.setText(context.getResources().getText(R.string.price) + " " + String.valueOf(itemPrice) + "$");
+        quantityTextView.setText(context.getResources().getText(R.string.quantity) + " " + String.valueOf(itemQuantity));
 
         Button btn = (Button) view.findViewById(R.id.sell_button);
         btn.setOnClickListener(new View.OnClickListener() {

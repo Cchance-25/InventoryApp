@@ -40,7 +40,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
     // primitive types
     private int mCurrentQuantity;
-
+    private String mEmailMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +48,11 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         setContentView(R.layout.activity_details);
 
         mItemName = (TextView) findViewById(R.id.product_name);
-        mItemPrice = (TextView) findViewById(R.id.price_value);
+        mItemPrice = (TextView) findViewById(R.id.prices_value);
         mItemQuantity = (TextView) findViewById(R.id.quantity_value);
         mItemSupplier = (TextView) findViewById(R.id.supplier_name);
         mProductImageView = (ImageView) findViewById(R.id.product_image);
+        mCurrentQuantity = 0;
 
         Button addBtn = (Button) findViewById(R.id.add_quantity);
         addBtn.setOnClickListener(new View.OnClickListener() {
@@ -82,7 +83,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 intent.setType("*/*");
                 intent.putExtra(Intent.EXTRA_EMAIL, "inventroy@app.com");
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Order");
-                intent.putExtra(Intent.EXTRA_TEXT, mCurrentItemUri.toString());
+                intent.putExtra(Intent.EXTRA_TEXT, mEmailMessage);
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                 }
@@ -169,6 +170,9 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             int quantity = cursor.getInt(quantityColumnIndex);
             byte[] imageBytes = cursor.getBlob(imageColumnIndex);
 
+            // set mCurrent quantity to the actual stock quantity
+            mCurrentQuantity = quantity;
+
             // Setting values to views
             mItemName.setText(name);
             mItemPrice.setText(Double.toString(price));
@@ -177,7 +181,18 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
             Bitmap imageBitmap = ImageUtils.convertByteArrayToBitmap(imageBytes);
             mProductImageView.setImageBitmap(imageBitmap);
+
+            // Prepare order message:
+            mEmailMessage = constructEmailMessage(name, supplier);
         }
+    }
+
+    private String constructEmailMessage(String name, String supplier) {
+        StringBuilder message = new StringBuilder();
+        message.append("Hello, " + supplier + ".\n");
+        message.append("I would like to order more of: " + name + ".\n");
+        message.append("I will contac with the details later. ");
+        return message.toString();
     }
 
     @Override
